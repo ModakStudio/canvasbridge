@@ -104,7 +104,8 @@ export class Assignment extends vscode.TreeItem {
         const dueDateText = this.dueAt
             ? this.formatKoreanDateTime(this.dueAt)
             : '없음';
-        const pointsText = this.pointsPossible ?? '미지정';
+        const pointsPossibleText = this.pointsPossible ? `${this.pointsPossible}점` : '0점';
+        const scoreText = this.score !== undefined ? `${this.score}` : '0';
         const submissionTypesText = this.submissionTypes && this.submissionTypes.length > 0
             ? this.submissionTypes.join(', ')
             : '없음';
@@ -113,7 +114,7 @@ export class Assignment extends vscode.TreeItem {
         return new vscode.MarkdownString(
             `**${this.label}** [${this.formatWorkflowState(this.workflow_state)}]\n\n` +
             `- 마감일: ${dueDateText}\n` +
-            `- 배점: ${pointsText}\n` +
+            `- 점수: ${scoreText}/${pointsPossibleText}\n` +
             `- 제출 방식: ${submissionTypesText}\n` +
             `- 상태: ${publishText}`
         );
