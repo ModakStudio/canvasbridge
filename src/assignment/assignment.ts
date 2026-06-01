@@ -53,6 +53,7 @@ export class AssignmentsProvider implements vscode.TreeDataProvider<Assignment> 
                     assignment.description,
                     assignment.due_at,
                     assignment.points_possible,
+                    assignment.score,
                     assignment.submission_types,
                     assignment.published,
                     vscode.TreeItemCollapsibleState.None
@@ -84,6 +85,7 @@ export class Assignment extends vscode.TreeItem {
         public readonly html: string,
         public readonly dueAt: string,
         public readonly pointsPossible: number,
+        public readonly score: number,
         public readonly submissionTypes: string[],
         public readonly published: boolean,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState

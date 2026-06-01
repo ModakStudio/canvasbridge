@@ -112,7 +112,8 @@ function getWebviewContent(
     initialFilesJson: string
 ): string {
     const dueText = assignment.dueAt ? assignment.dueAt : '미정';
-    const pointsText = assignment.pointsPossible ? `${assignment.pointsPossible}점` : '미지정';
+    const pointsPossibleText = assignment.pointsPossible ? `${assignment.pointsPossible}점` : '0점';
+    const scoreText = assignment.score !== undefined ? `${assignment.score}` : '0';
     const submitTypeText = assignment.submissionTypes?.length
         ? assignment.submissionTypes.join(' · ')
         : '제출 방식 없음';
@@ -152,7 +153,7 @@ function getWebviewContent(
                     </h1>
                     <div class="meta">
                         <span>마감: ${dueText}</span>
-                        <span>배점: ${pointsText}</span>
+                        <span>점수: ${scoreText}/${pointsPossibleText}</span>
                         <span>방식: ${submitTypeText}</span>
                     </div>
                 </section>
