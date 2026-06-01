@@ -36,14 +36,17 @@ export class AssignmentsProvider implements vscode.TreeDataProvider<Assignment> 
                 const data: any = await response.json();
 
                 return await Promise.all(data.map(async (assignment: any) => {
-                    const workflowState = await fetch(`${baseURL}/api/v1/courses/${courseId}/assignments/${assignment.id}/submissions/self`, {
+                    const { workflowState, score } = await fetch(`${baseURL}/api/v1/courses/${courseId}/assignments/${assignment.id}/submissions/self`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
                         },
                     }).then(res => res.json())
-                      .then(submissions => submissions.workflow_state);
+                      .then(submissions => ({
+                          workflowState: submissions.workflow_state,
+                          score: submissions.score
+                      }));
 
                     return new Assignment(
                     assignment.name,
@@ -53,7 +56,7 @@ export class AssignmentsProvider implements vscode.TreeDataProvider<Assignment> 
                     assignment.description,
                     assignment.due_at,
                     assignment.points_possible,
-                    assignment.score,
+                    score,
                     assignment.submission_types,
                     assignment.published,
                     vscode.TreeItemCollapsibleState.None
