@@ -22,7 +22,7 @@ export class AssignmentsProvider implements vscode.TreeDataProvider<Assignment> 
             }
 
             try {
-                const response = await fetch(`${baseURL}/api/v1/courses/${courseId}/assignments`, {
+                const response = await fetch(`${baseURL}/api/v1/courses/${courseId}/assignments?per_page=100`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
