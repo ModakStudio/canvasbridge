@@ -36,14 +36,17 @@ export class AssignmentsProvider implements vscode.TreeDataProvider<Assignment> 
                 const data: any = await response.json();
 
                 return await Promise.all(data.map(async (assignment: any) => {
-                    const workflowState = await fetch(`${baseURL}/api/v1/courses/${courseId}/assignments/${assignment.id}/submissions/self`, {
+                    const { workflowState, score } = await fetch(`${baseURL}/api/v1/courses/${courseId}/assignments/${assignment.id}/submissions/self`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
                         },
                     }).then(res => res.json())
-                      .then(submissions => submissions.workflow_state);
+                      .then(submissions => ({
+                          workflowState: submissions.workflow_state,
+                          score: submissions.score
+                      }));
 
                     return new Assignment(
                     assignment.name,
@@ -53,6 +56,7 @@ export class AssignmentsProvider implements vscode.TreeDataProvider<Assignment> 
                     assignment.description,
                     assignment.due_at,
                     assignment.points_possible,
+                    score,
                     assignment.submission_types,
                     assignment.published,
                     vscode.TreeItemCollapsibleState.None
@@ -84,6 +88,7 @@ export class Assignment extends vscode.TreeItem {
         public readonly html: string,
         public readonly dueAt: string,
         public readonly pointsPossible: number,
+        public readonly score: number,
         public readonly submissionTypes: string[],
         public readonly published: boolean,
         public readonly collapsibleState: vscode.TreeItemCollapsibleState
@@ -102,7 +107,8 @@ export class Assignment extends vscode.TreeItem {
         const dueDateText = this.dueAt
             ? this.formatKoreanDateTime(this.dueAt)
             : '없음';
-        const pointsText = this.pointsPossible ?? '미지정';
+        const pointsPossibleText = this.pointsPossible ? this.pointsPossible : 0;
+        const scoreText = this.score !== undefined ? this.score : 0;
         const submissionTypesText = this.submissionTypes && this.submissionTypes.length > 0
             ? this.submissionTypes.join(', ')
             : '없음';
@@ -111,7 +117,7 @@ export class Assignment extends vscode.TreeItem {
         return new vscode.MarkdownString(
             `**${this.label}** [${this.formatWorkflowState(this.workflow_state)}]\n\n` +
             `- 마감일: ${dueDateText}\n` +
-            `- 배점: ${pointsText}\n` +
+            `- 점수: ${scoreText}/${pointsPossibleText}점\n` +
             `- 제출 방식: ${submissionTypesText}\n` +
             `- 상태: ${publishText}`
         );
